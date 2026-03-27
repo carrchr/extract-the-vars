@@ -1,0 +1,36 @@
+name: Extract Test
+
+on:
+  workflow_dispatch:
+    inputs:
+      message:
+        description: 'Optional message to include in the run'
+        required: false
+        default: 'Triggered manually'
+
+jobs:
+  fetch_and_build_file:
+    runs-on: ubuntu-latest
+    strategy:
+        matrix:
+          environment: [Production, Development]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate File
+        run: |
+            jq -n \
+              --arg TEST_SECRET_ONE "${{secrets.TEST_SECRET_ONE}}" \
+              --arg TEST_SECRET_TWO "${{secrets.TEST_SECRET_TWO}}" \
+              '{
+                "TEST_SECRET_ONE": $TEST_SECRET_ONE,
+                "TEST_SECRET_TWO": $TEST_SECRET_TWO
+              }' > archive.json
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: archive-${{ matrix.environment }}
+          path: archive.json
+          retention-days: 1
