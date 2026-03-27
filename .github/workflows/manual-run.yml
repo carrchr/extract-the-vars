@@ -14,26 +14,23 @@ jobs:
     strategy:
         matrix:
           environment: [Production, Development]
-    env:
-      TEST_SECRET_ONE: ${{ secrets.TEST_SECRET_ONE }}
-      TEST_SECRET_TWO: ${{ secrets.TEST_SECRET_TWO }}
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Generate File
-
         run: |
-            jq -n \
-              '{
-                "TEST_SECRET_ONE": $TEST_SECRET_ONE,
-                "TEST_SECRET_TWO": $TEST_SECRET_TWO
-              }' > archive.json
+          echo "TEST_SECRET_ONE: $TEST_SECRET_ONE" > archive.txt
+          echo "TEST_SECRET_TWO: $TEST_SECRET_TWO" >> archive.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: archive-${{ matrix.environment }}
-          path: archive.json
+          path: archive.txt
           retention-days: 1
+    env:
+      TEST_SECRET_ONE: ${{ secrets.TEST_SECRET_ONE }}
+      TEST_SECRET_TWO: ${{ secrets.TEST_SECRET_TWO }}
+      
