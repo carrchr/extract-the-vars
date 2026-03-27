@@ -21,8 +21,8 @@ jobs:
       - name: Generate File
         run: |
             jq -n \
-              --arg TEST_SECRET_ONE "${{secrets.TEST_SECRET_ONE}}" \
-              --arg TEST_SECRET_TWO "${{secrets.TEST_SECRET_TWO}}" \
+              --arg TEST_SECRET_ONE "${{ secrets.TEST_SECRET_ONE }}" \
+              --arg TEST_SECRET_TWO "${{ secrets.TEST_SECRET_TWO }}" \
               '{
                 "TEST_SECRET_ONE": $TEST_SECRET_ONE,
                 "TEST_SECRET_TWO": $TEST_SECRET_TWO
