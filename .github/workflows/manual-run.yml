@@ -14,15 +14,18 @@ jobs:
     strategy:
         matrix:
           environment: [Production, Development]
+    env:
+      TEST_SECRET_ONE: ${{ secrets.TEST_SECRET_ONE }}
+      TEST_SECRET_TWO: ${{ secrets.TEST_SECRET_TWO }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Generate File
+
         run: |
             jq -n \
-              --arg TEST_SECRET_ONE "${{ secrets.TEST_SECRET_ONE }}" \
-              --arg TEST_SECRET_TWO "${{ secrets.TEST_SECRET_TWO }}" \
               '{
                 "TEST_SECRET_ONE": $TEST_SECRET_ONE,
                 "TEST_SECRET_TWO": $TEST_SECRET_TWO
