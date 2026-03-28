@@ -19,6 +19,7 @@ jobs:
     env:
       TEST_SECRET_ONE: ${{ secrets.TEST_SECRET_ONE }}
       TEST_SECRET_TWO: ${{ secrets.TEST_SECRET_TWO }}
+      ENCRYPTION_KEY: ${{ secrets.ENCRYPTION_KEY }}
 
     steps:
       - name: Checkout code
@@ -28,14 +29,21 @@ jobs:
         run: |
           import os
           data = open("archive.txt", "w")
-          for q in (os.getenv("TEST_SECRET_ONE"), os.getenv("TEST_SECRET_TWO")):
-            print(q)
-            data.write(q)
+          keys = ["TEST_SECRET_ONE", "TEST_SECRET_TWO"]
+          for q in keys:
+            value = os.getenv(q)
+            wrt = q + ": " + value + "\n"
+            data.write(wrt)
         shell: python
+
+      - name: Secure file
+        run: |
+          cat archive.txt | openssl enc -aes-256-cbc -pbkdf2 -iter 1234567 -salt -pass pass:$ENCRYPTION_KEY > archive.enc
+          rm archive.txt
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: archive-${{ matrix.environment }}
-          path: archive.txt
+          path: archive.enc
           retention-days: 1
